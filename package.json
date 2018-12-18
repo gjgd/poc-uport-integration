@@ -1,0 +1,32 @@
+{
+  "name": "poc-uport-integration",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "did-resolver": "0.0.4",
+    "ethr-did": "^1.0.0",
+    "ethr-did-registry": "0.0.3",
+    "ethr-did-resolver": "^0.1.3",
+    "truffle-contract": "^3.0.5",
+    "web3": "^0.20.7"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jest": "^22.1.2",
+    "eslint-plugin-node": "^8.0.0",
+    "jest": "^23.6.0"
+  },
+  "engines": {
+    "node": "8"
+  },
+  "jest": {
+    "testEnvironment" : "node"
+  }
+}
