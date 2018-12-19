@@ -5604,6 +5604,11 @@ truffle-error@^0.0.3:
   resolved "https://registry.yarnpkg.com/truffle-error/-/truffle-error-0.0.3.tgz#4bf55242e14deee1c7194932709182deff2c97ca"
   integrity sha1-S/VSQuFN7uHHGUkycJGC3v8sl8o=
 
+truffle-hdwallet-provider@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/truffle-hdwallet-provider/-/truffle-hdwallet-provider-1.0.0.tgz#2848da5a0f037cb18a70b82fcb95a886ed6b1da0"
+  integrity sha512-LMtYQfrSW4ka5qYEWzJ/GboTWUwZQHRObkjyjR7lmuS0lBn9ml5MAfllgH9vX0H4qPo9s8clNFhVGaHSG/vgeA==
+
 tslib@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
