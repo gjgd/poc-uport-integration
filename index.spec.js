@@ -2,15 +2,18 @@ jest.useFakeTimers();
 const Web3 = require('web3');
 const contract = require('truffle-contract');
 const resolver = require('did-resolver');
-const EthrDID = require('ethr-did');
 const didRegistryContract = require('ethr-did-registry');
 const registerEthrDidToResolver = require('ethr-did-resolver').default;
 const HttpProvider = require('ethjs-provider-http');
+const EthrDID = require('ethr-did');
 
 describe('With Ganache', () => {
   let provider;
   let web3;
   let registryOwner;
+  let identityOwner;
+  let newIdentityOwner;
+  let delegate;
   let accounts;
 
   beforeAll(async () => {
@@ -19,6 +22,9 @@ describe('With Ganache', () => {
     web3.setProvider(provider);
     accounts = await web3.eth.getAccounts();
     registryOwner = accounts[0];
+    identityOwner = accounts[1].toLowerCase();
+    newIdentityOwner = accounts[2].toLowerCase();
+    delegate = accounts[3].toLowerCase();
   });
 
   let registryAddress;
@@ -42,14 +48,10 @@ describe('With Ganache', () => {
 
   let did;
   let ethrDid;
-  let myAddress;
   describe('Create an Ethr DID', () => {
     beforeAll(async () => {
-      const keyPair = EthrDID.createKeyPair();
-      myAddress = keyPair.address;
       ethrDid = new EthrDID({
-        address: keyPair.address,
-        privateKey: keyPair.privateKey,
+        address: identityOwner,
         provider,
         registry: registryAddress.toLowerCase(),
       });
@@ -62,12 +64,11 @@ describe('With Ganache', () => {
 
     it('should have the right owner', async () => {
       const owner = await ethrDid.lookupOwner();
-      return expect(owner).toBe(myAddress);
+      expect(owner).toBe(identityOwner);
     });
 
-    // eslint-disable-next-line
     it('should fail to resolve without setting up the resolver first', () => {
-      return expect(resolver(did)).rejects.toThrow("Unsupported DID method: 'ethr'");
+      expect(resolver(did)).rejects.toThrow("Unsupported DID method: 'ethr'");
     });
   });
 
@@ -83,6 +84,30 @@ describe('With Ganache', () => {
       const didDocument = await resolver(did);
       expect(didDocument['@context']).toBeDefined();
       expect(didDocument.id).toBe(did);
+      expect(didDocument.publicKey).toHaveLength(1);
+    });
+  });
+
+  describe('Add a delegate', () => {
+    beforeAll(async () => {
+      await ethrDid.addDelegate(delegate);
+    });
+
+    it('should change the DID document', async () => {
+      const didDocument = await resolver(did);
+      expect(didDocument.publicKey).toHaveLength(2);
+      expect(didDocument.publicKey[1].ethereumAddress).toBe(delegate);
+    });
+  });
+
+  describe('Change owner', () => {
+    beforeAll(async () => {
+      await ethrDid.changeOwner(newIdentityOwner);
+    });
+
+    it('should change the owner in the smart contract', async () => {
+      const owner = await ethrDid.lookupOwner();
+      expect(owner).toBe(newIdentityOwner);
     });
   });
 });
