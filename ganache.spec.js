@@ -35,8 +35,6 @@ describe('With Ganache', () => {
       DidReg.setProvider(provider);
       registry = await DidReg.new({
         from: registryOwner,
-        gasPrice: 100000000000,
-        gas: 4712388,
       });
       registryAddress = registry.address;
     });
@@ -108,6 +106,33 @@ describe('With Ganache', () => {
     it('should change the owner in the smart contract', async () => {
       const owner = await ethrDid.lookupOwner();
       expect(owner).toBe(newIdentityOwner);
+    });
+  });
+
+  describe('Add a large PGP public key', () => {
+    it('should add the key in the did document', async () => {
+      const value = {
+        revocations: '/orbitdb/QmXecs3KW51MvHnH2qzN19gu5fmEtkoU5KwvGavoHEedXM/revocations',
+        publicKeyPem: '-----BEGIN PGP PUBLIC KEY BLOCK-----\r\nVersion: OpenPGP.js v4.0.1\r\nComment: https://openpgpjs.org\r\n\r\nxk8EW/coshMFK4EEAAoCAwT3Om3h2BBBY5W80KBE6MdQhYPAfSeUW8XoluvB\neyDQBV49WeAj1IA5HM+VOZhdc4nbOj98R0Ef3Ki11rurGm5MzQh0ZXN0LWtl\necJ3BBATCAApBQJb9yiyBgsJBwgDAgkQ2Lc5m5Vfb/4EFQgKAgMWAgECGQEC\nGwMCHgEAAKBQAQCR1AqE7Z41wGaArR+PUzspoyuYu1I8Ne5SpuY5jVlgaQEA\n0NDz5Dm9mQ5rgI2Jdrnq0TYH3vrhNdaugfzhDnlYjOHOUwRb9yiyEgUrgQQA\nCgIDBAnQM+84qvBafoux2fyXgNt/OrEXQs+X6uQx6b63MtmebnMPlBlBiMu2\nKoQIi7MNaixhbxC42xE8e8JLURjYpGwDAQgHwmEEGBMIABMFAlv3KLIJENi3\nOZuVX2/+AhsMAADA8gEAldik6/Z8JJlbfJKjRpOUE1uieGKxGG3Kudabi80J\nlOQA/iUqKVWDLEcANaXKqHAOZeyefTfK6TY4S4/vQIdgt7DD\r\n=N/BE\r\n-----END PGP PUBLIC KEY BLOCK-----\r\n\r\n',
+      };
+      const valueStr = JSON.stringify(value);
+      const valueBase64 = Buffer.from(valueStr).toString('hex');
+      await ethrDid.setAttribute('did/pub/Secp256k1/veriKey/pem', `0x${valueBase64}`, 86400, 200000);
+      const didDocument = await resolver(did);
+      const returnedValue = didDocument.publicKey[2].value;
+      const returnedValueStr = Buffer.from(returnedValue.substring(2), 'hex').toString();
+      const returnedValueParsed = JSON.parse(returnedValueStr);
+      expect(returnedValueParsed).toEqual(value);
+    });
+  });
+
+  describe('Add an hex public key', () => {
+    it('should add the key in the did document', async () => {
+      const publicKeyHex = '0x043e82ae1c5056ece9e12f1fe036a5430eae6b5b6ea06e97ff9484042aaf1e9621efdb928e47f4cde38d5e8694951abe156e625a15eaae0af0e303d5a40e3fe7d6';
+      await ethrDid.setAttribute('did/pub/Secp256k1/veriKey/hex', publicKeyHex);
+      const didDocument = await resolver(did);
+      const returnedPublicKeyHex = didDocument.publicKey[3].publicKeyHex;
+      expect(returnedPublicKeyHex).toBe(returnedPublicKeyHex);
     });
   });
 });
