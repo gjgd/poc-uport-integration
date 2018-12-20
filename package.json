@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "jest",
-    "postinstall": "cd node_modules/ethr-did; npm install --only=dev; npm run build:es5; cd -"
+    "postinstall": "cd node_modules/ethr-did; npm install --only=dev; npm run build:es5; cd -; cd node_modules/ethr-did-resolver; npm install --only=dev; npm run build:es5; cd -"
   },
   "author": "",
   "license": "ISC",
@@ -13,7 +13,7 @@
     "ethjs-provider-http": "^0.1.6",
     "ethr-did": "git@github.com:transmute-industries/ethr-did.git#605a041b470aac1df5f0730ddc90bd4451baa988",
     "ethr-did-registry": "0.0.3",
-    "ethr-did-resolver": "^0.1.3",
+    "ethr-did-resolver": "git@github.com:gjgd/ethr-did-resolver.git#de12751f2b7756faccfc44ee04a843bd8dfffdcf",
     "truffle-contract": "^4.0.0-beta.2",
     "truffle-hdwallet-provider": "^1.0.0",
     "web3": "^1.0.0-beta.37"
